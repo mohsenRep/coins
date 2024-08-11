@@ -1,6 +1,6 @@
 "use client";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import getCoinList from "./api/getCoinList";
+import getCoinList from "@/app/api/getCoinList";
 import Category from "./components/category";
 import Table from "./components/table";
 import ExplainSection from "./components/explainSection";
