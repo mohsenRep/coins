@@ -7,7 +7,6 @@ const Pagination = ({
   currentPage: number;
   totalPages: number;
 }) => {
-  console.log(currentPage, totalPages);
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { replace } = useRouter();
@@ -27,16 +26,22 @@ const Pagination = ({
         pageNumbers.push(i);
       }
     } else {
-      pageNumbers.push(1);
+      if (currentPage === 1) {
+        pageNumbers.push(1, 2, 3, "...", totalPages);
+      }
+      else if (currentPage === totalPages) {
+        pageNumbers.push(1, "...", totalPages - 2, totalPages - 1, totalPages);
+      }
+      else {pageNumbers.push(1);
 
       if (currentPage > 3) {
         pageNumbers.push("...");
       }
-
       const start = Math.max(2, currentPage - 1);
-      const end = Math.min(totalPages - 1, currentPage + 1);
+      const end = Math.min(currentPage + 1, totalPages - 1);
+      console.log(start, end);
 
-      for (let i = start; i >= end; i++) {
+      for (let i = start; i <= end; i++) {
         pageNumbers.push(i);
       }
 
@@ -45,7 +50,7 @@ const Pagination = ({
       }
 
       pageNumbers.push(totalPages);
-    }
+    }}
 
     return pageNumbers;
   };
@@ -63,9 +68,7 @@ const Pagination = ({
               ? "bg-blue-600 text-white"
               : "bg-gray-200 text-black"
           }  ${
-            pageNumber == "..."
-              ? "cursor-default bg-white"
-              : "cursor-pointer hover:bg-gray-300"
+            pageNumber == "..." ? "cursor-default bg-white" : "cursor-pointer"
           }`}
           disabled={pageNumber === "..."}
         >

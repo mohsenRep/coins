@@ -1,14 +1,14 @@
 "use client";
-
+import { useDebouncedCallback } from "use-debounce";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 
 const Search = () => {
   const pathname = usePathname();
   const { replace } = useRouter();
   const searchParams = useSearchParams();
-  const handleSearch = (term: string) => {
+  const handleSearch = useDebouncedCallback((term: string) => {
     const params = new URLSearchParams(searchParams);
-    params.set('page', '1');
+    params.set("page", "1");
     if (term) {
       params.set("search", term);
     } else {
@@ -16,7 +16,7 @@ const Search = () => {
     }
     console.log(term);
     replace(`${pathname}?${params.toString()}`);
-  };
+  },300);
   return (
     <div className="grid grid-cols-3 lg:grid-cols-6 gap-4 p-4 bg-gray-300 rounded-t-lg  items-center">
       <span className="pr-2">نام رمز ارز</span>

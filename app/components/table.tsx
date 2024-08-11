@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Search from "./search";
 
 const Table = (data: { items: any[] }) => {
@@ -53,9 +54,9 @@ const Table = (data: { items: any[] }) => {
             <span className="hidden lg:block justify-self-center">
               {item.sell_irt_price} تومان
             </span>
-            <button className="hidden lg:block w-full p-4 bg-blue-600 text-white rounded hover:bg-blue-700 justify-self-center">
+            <Link href={`/exchange/${item.currency_code}`} className="hidden lg:block w-full p-4 bg-blue-600 text-white rounded hover:bg-blue-700 justify-self-center text-center">
               معامله
-            </button>
+            </Link>
           </div>
         )
       )}
