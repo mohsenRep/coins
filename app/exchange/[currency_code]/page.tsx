@@ -14,12 +14,14 @@ export default async function Page({
 }: {
   params: { currency_code: string };
 }) {
-  const chartPeriod: any = await getChartPeriod();
+  const chartPeriod = await getChartPeriod();
+  console.log(chartPeriod);
 
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
-    queryKey: ["coinPrice", params.currency_code],
-    queryFn: async () => await getCoinPrice(params.currency_code),
+    queryKey: ["coinPrice", params.currency_code, chartPeriod.items[0]],
+    queryFn: async () =>
+      await getCoinPrice(params.currency_code, chartPeriod.items[0]),
   });
   const coinPrice = await getCoinPrice(params.currency_code);
   console.log(coinPrice);
@@ -27,7 +29,7 @@ export default async function Page({
     <div>
       <main className="2xl:container mx-auto lg:p-10 p-4 2xl:px-36">
         <HydrationBoundary state={dehydrate(queryClient)}>
-          <TradeTable currency_code={params.currency_code} />
+          <TradeTable currency_code={params.currency_code} chartPeriod={chartPeriod} />
         </HydrationBoundary>
         <section>
           <h2 className="text-2xl font-bold mb-4">درباره بیت کوین</h2>

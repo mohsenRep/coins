@@ -1,4 +1,4 @@
-async function getData(currency_code: string, chart = '1m') {
+async function getData(currency_code: string, chart = '24h') {
     const options = {
         method: "POST",
         headers: {
