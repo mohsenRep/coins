@@ -18,7 +18,7 @@ const Search = () => {
     replace(`${pathname}?${params.toString()}`);
   },300);
   return (
-    <div className="grid grid-cols-3 lg:grid-cols-6 gap-4 p-4 bg-gray-300 rounded-t-lg  ">
+    <div className="grid grid-cols-3 lg:grid-cols-6 gap-4 p-4 bg-gray-300 rounded-t-lg items-center ">
       <span className="pr-2">نام رمز ارز</span>
       <span className="justify-self-center">ارزش دلاری</span>
       <span className="justify-self-end lg:justify-self-center">تغییر روزانه</span>

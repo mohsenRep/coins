@@ -4,6 +4,7 @@ import getCoinChart from "@/app/api/getCoinChart";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
+  ChartOptions,
   CategoryScale,
   LinearScale,
   PointElement,
@@ -83,15 +84,15 @@ const CoinChart: React.FC<{ currency_code: string; chartPeriod: any }> = ({
     ],
   };
 
-  const options = {
+  const options: ChartOptions<"line"> = {
     responsive: true,
     interaction: {
-      mode: "index",
+      mode: "index" as const,
       intersect: false,
     },
-    stacked: false,
+
     hover: {
-      mode: "index",
+      mode: "index" as const,
       intersect: false,
     },
     elements: {
@@ -110,43 +111,47 @@ const CoinChart: React.FC<{ currency_code: string; chartPeriod: any }> = ({
         display: false,
       },
       tooltip: {
-        mode: "index",
+        mode: "index" as const,
         intersect: false,
       },
     },
     scales: {
       y: {
+        stacked: false,
         position: "right" as const,
         grid: {
           color: "rgba(0, 0, 0, 0.1)",
         },
         ticks: {
-          callback: function (val: string): string | undefined {
+          callback: function (val: string | number): string | undefined {
             if (+val > 1000000) {
               return (+val / 1000000).toLocaleString() + "M";
             }
-            return +val > 1000 ? +val / 1000 + "k" : val;
+            return +val > 1000
+              ? (+val / 1000).toLocaleString() + "k"
+              : val.toString();
           },
         },
       },
       y1: {
-        type: "linear",
+        type: "linear" as const,
         display: true,
         position: "left" as const,
-
         grid: {
           drawOnChartArea: false,
         },
         ticks: {
-          callback: function (val: string): string | undefined {
-            return +val > 1000 ? (+val / 1000).toLocaleString() + "k" : val;
+          callback: function (val: string | number): string | undefined {
+            return +val > 1000
+              ? (+val / 1000).toLocaleString() + "k"
+              : val.toString();
           },
         },
       },
       x: {
         display: false,
         grid: {
-          display: false, // This will hide vertical grid lines
+          display: false,
         },
       },
     },
@@ -165,23 +170,21 @@ const CoinChart: React.FC<{ currency_code: string; chartPeriod: any }> = ({
     ],
   };
 
-  const optionsUsdPrice = {
+  const optionsUsdPrice: ChartOptions<"line"> = {
     responsive: true,
-
     aspectRatio: 5,
-
     layout: {
       padding: {
         right: 50,
       },
     },
     interaction: {
-      mode: "index",
+      mode: "index" as const,
       intersect: false,
     },
-    stacked: false,
+    
     hover: {
-      mode: "index",
+      mode: "index" as const,
       intersect: false,
     },
     elements: {
@@ -200,56 +203,59 @@ const CoinChart: React.FC<{ currency_code: string; chartPeriod: any }> = ({
         display: false,
       },
       tooltip: {
-        mode: "index",
+        mode: "index" as const,
         intersect: false,
       },
     },
     scales: {
       y: {
-        type: "linear",
+        stacked: false,
+        type: "linear" as const,
         display: true,
         position: "left" as const,
-
         grid: {
           color: "rgba(0, 0, 0, 0.1)",
         },
         ticks: {
-          callback: function (val: any, index: number): string | undefined {
-            return +val > 1000 ? +val / 1000 + "k" : val;
+          callback: function (
+            val: number | string,
+            index: number
+          ): string | undefined {
+            return +val > 1000
+              ? (+val / 1000).toString() + "k"
+              : val.toString();
           },
         },
       },
       x: {
-        gridLines: { display: false, color: "grey" },
+        grid: {
+          display: false,
+          color: "grey",
+        },
         ticks: {
-          callback: function (val: any, index: number): string | undefined {
+          callback: function (
+            val: number | string,
+            index: number
+          ): string | undefined {
             switch (timeDuration) {
               case "24h":
                 return index % 3 === 0 ? labelForValue[val] : undefined;
-
               case "1w":
                 return index % 24 === 0 ? labelForValue[val] : undefined;
-
               case "1m":
                 return index % 90 === 0 ? labelForValue[val] : undefined;
-
               case "3m":
                 return index % 10 === 0 ? labelForValue[val] : undefined;
               case "1y":
                 return index % 1095 === 0 ? labelForValue[val] : undefined;
-
               case "ALL":
-                // Select 9 objects with equal time difference
                 const totalObjects = data.length;
                 const step = Math.floor(totalObjects / 8);
                 return index % step === 0 ? labelForValue[val] : undefined;
               default:
-                return data; // Return all data if period is not recognized
+                return undefined;
             }
           },
-        },
-        grid: {
-          display: false, // This will hide vertical grid lines
         },
       },
     },
@@ -267,16 +273,19 @@ const CoinChart: React.FC<{ currency_code: string; chartPeriod: any }> = ({
       <h2 className="text-xl font-bold  text-center my-16">
         نمودار قیمت
         <span className="text-2xl font-bold mb-4 text-blue-700">
-          {" "+data.items[0].coin.fa_name+" "}
+          {" " + data.items[0].coin.fa_name + " "}
         </span>
         و نرخ برابری تومان
       </h2>
       <div className="bg-white p-4 rounded-lg shadow-md" dir="rtl">
         <div className="flex justify-start gap-4 mb-8 mr-4">
-          {chartPeriod.items.map((item: string) => (
+          {chartPeriod.items.map((item: string,index:number) => (
             <button
+            key={index}
               onClick={() => setTimeDuration(item)}
-              className={`" text-xs lg:text-sm 2xl:text-base" ${item === timeDuration ? "text-blue-600":"text-gray-500"}`}
+              className={`" text-xs lg:text-sm 2xl:text-base" ${
+                item === timeDuration ? "text-blue-600" : "text-gray-500"
+              }`}
             >
               {getPeriod(item)}
             </button>
