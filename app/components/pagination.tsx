@@ -1,4 +1,5 @@
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { digitsEnToFa } from "@persian-tools/persian-tools";
 
 const Pagination = ({
   currentPage,
@@ -72,7 +73,7 @@ const Pagination = ({
           }`}
           disabled={pageNumber === "..."}
         >
-          {pageNumber}
+          {digitsEnToFa(pageNumber)}
         </button>
       ))}
     </nav>

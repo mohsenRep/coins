@@ -2,19 +2,16 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import getCoinPrice from "@/app/api/getCoinPrice";
 import { useState } from "react";
-const TradeTable: React.FC<{ currency_code: string; chartPeriod: any }> = ({
-  currency_code,
-  chartPeriod,
-}) => {
-  const [trade, setTrade] = useState("sell");
+import { digitsEnToFa, addCommas } from "@persian-tools/persian-tools";
+const TradeTable: React.FC<{ currency_code: string }> = ({ currency_code }) => {
+  const [trade, setTrade] = useState("buy");
   const [value, setValue] = useState("");
-  const [finalValue, setFinalValue] = useState("");
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
 
     // Regular expression to match numbers with optional single decimal point
-    const regex = /^[0-9]*\.?[0-9]*$/;
+    const regex = /^(0|[1-9]\d*)?(\.\d*)?$/;
 
     if (regex.test(inputValue) || inputValue === "") {
       if (inputValue === ".") {
@@ -25,14 +22,39 @@ const TradeTable: React.FC<{ currency_code: string; chartPeriod: any }> = ({
         setValue(inputValue);
       }
     }
-    
   };
   const { data, isLoading, isError } = useQuery({
-    queryFn: async () =>
-      await getCoinPrice(currency_code, chartPeriod.items[0]),
+    queryFn: async () => await getCoinPrice(currency_code),
     placeholderData: keepPreviousData,
-    queryKey: ["coinPrice", currency_code, chartPeriod.items[0]],
+    queryKey: ["coinPrice", currency_code],
+    refetchInterval: 1000 * 60,
   });
+  const buyAmount = (amount: number) => {
+    if (amount < 500000) {
+      return '';
+    } else {
+      return digitsEnToFa(
+        addCommas((amount / +data.items[0].buy_irt_price).toFixed(9))
+      );
+    }
+  };
+  const sellAount = (amount: number) => {
+    if (amount * +data.items[0].sell_irt_price < 500000) {
+      return '';
+    } else {
+      return digitsEnToFa(
+        addCommas((amount * +data.items[0].sell_irt_price).toFixed(0))
+      );
+    }
+  };
+
+  if (isLoading) {
+    return <div>Loading ...</div>;
+  }
+  if (isError) {
+    return <div>Sorry There was an Error</div>;
+  }
+
   return (
     <section className="bg-white rounded-lg shadow-md p-6 mb-8">
       <div className="grid grid-cols-1 lg:grid-cols-2  gap-6">
@@ -54,32 +76,39 @@ const TradeTable: React.FC<{ currency_code: string; chartPeriod: any }> = ({
             </div>
             <div className="mr-auto text-right">
               <div className="font-bold text-left mb-2">
-                {data.items[0].irt_price} تومان
+                {digitsEnToFa(addCommas(data.items[0].irt_price))} تومان
               </div>
               <div className="text-sm text-gray-500 text-left ">
-                ${data.items[0].price}
+                ${addCommas(data.items[0].price)}
               </div>
             </div>
           </div>
           <hr className="mb-6  h-0.5 border-t-0 bg-gray-200" />
           <div className="grid grid-cols-2 gap-6 lg:gap-9 text-xs lg:text-sm 2xl:text-base">
             <div className="text-gray-500 text-right">تغییر قیمت امروز:</div>
-            <div className="text-left  text-green-500" dir="ltr">
-              {data.items[0].daily_change_percent}
+            <div
+              className={`text-left  ${
+                data.items[0].daily_change_percent.includes("-")
+                  ? "text-red-500"
+                  : "text-green-500"
+              }`}
+              dir="ltr"
+            >
+              {digitsEnToFa(data.items[0].daily_change_percent)}
             </div>
 
             <div className="text-gray-500 text-right">
               خرید {data.items[0].fa_name}:
             </div>
             <div className="text-left  text-green-500">
-              {data.items[0].buy_irt_price} تومان
+              {digitsEnToFa(addCommas(data.items[0].buy_irt_price))} تومان
             </div>
 
             <div className="text-gray-500 text-right">
               فروش {data.items[0].fa_name} :
             </div>
             <div className="text-left  text-red-500">
-              {data.items[0].sell_irt_price} تومان
+              {digitsEnToFa(addCommas(data.items[0].sell_irt_price))} تومان
             </div>
 
             {/* <div className="text-gray-500 text-right">
@@ -140,9 +169,9 @@ const TradeTable: React.FC<{ currency_code: string; chartPeriod: any }> = ({
                 viewBox="0 0 24 24"
               >
                 <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
                   d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
                 />
               </svg>
@@ -153,9 +182,9 @@ const TradeTable: React.FC<{ currency_code: string; chartPeriod: any }> = ({
           <div className="bg-gray-100 rounded-lg p-3 flex items-center justify-between mb-6 text-xs lg:text-sm 2xl:text-base">
             <input
               type="text"
-              placeholder="مقدار نهایی"
+              placeholder={trade === "buy" ? `حداقل خرید ${digitsEnToFa(addCommas("500,000"))} تومان` : `حداقل فروش ${digitsEnToFa(addCommas("500,000"))} تومان`}
               className="bg-transparent text-right outline-none"
-              value={value}
+              value={trade === "buy" ? buyAmount(+value) : sellAount(+value)}
               readOnly
             />
             {trade === "sell" ? (

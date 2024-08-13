@@ -1,4 +1,4 @@
-async function getData(currency_code: string) {
+async function getData(currency_code: string, period = '24h') {
     const options = {
         method: "POST",
         headers: {
@@ -7,18 +7,18 @@ async function getData(currency_code: string) {
         },
         body: JSON.stringify({
             currency_code,
-
+            period
         }),
     };
 
-    const response = fetch("https://b.wallet.ir/coinlist/list", options)
+    const response = fetch("https://b.wallet.ir/coinlist/chart", options)
         .then((response) => response.json())
         .catch((err) => console.error(err));
 
     return response;
 }
 
-export default async function getCoinPrice(currency_code: string) {
-    const data = await getData(currency_code);
+export default async function getCoinChart(currency_code: string, period?: string) {
+    const data = await getData(currency_code, period);
     return data;
 }

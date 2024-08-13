@@ -1,6 +1,6 @@
 "use client";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import getCoinPrice from "@/app/api/getCoinPrice";
+import getCoinChart from "@/app/api/getCoinChart";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -12,6 +12,7 @@ import {
   Title,
   Tooltip,
   Legend,
+  Ticks,
 } from "chart.js";
 import { useState } from "react";
 
@@ -54,18 +55,18 @@ const CoinChart: React.FC<{ currency_code: string; chartPeriod: any }> = ({
 }) => {
   const [timeDuration, setTimeDuration] = useState(chartPeriod.items[0]);
   const { data, isLoading, isError } = useQuery({
-    queryFn: async () => await getCoinPrice(currency_code, timeDuration),
+    queryFn: async () => await getCoinChart(currency_code, timeDuration),
     placeholderData: keepPreviousData,
-    queryKey: ["coinPrice", currency_code, timeDuration],
+    queryKey: ["coinChart", currency_code, timeDuration],
   });
 
-  const labelForValue = data.items[0].chart.map((item: any) => item.title);
+  const labelForValue = data.items.map((item: any) => item.title);
   const chartData = {
-    labels: data.items[0].chart.map((item: any) => item.date),
+    labels: data.items.map((item: any) => item.date),
     datasets: [
       {
         label: "قیمت بیت کوین",
-        data: data.items[0].chart.map((item: any) => item.price),
+        data: data.items.map((item: any) => item.price),
         borderColor: "rgb(255, 159, 64)",
         backgroundColor: "rgba(255, 159, 64,0.2)",
         fill: "start",
@@ -73,7 +74,7 @@ const CoinChart: React.FC<{ currency_code: string; chartPeriod: any }> = ({
       },
       {
         label: "برابری",
-        data: data.items[0].chart.map((item: any) => item.irt_price),
+        data: data.items.map((item: any) => item.irt_price),
         borderColor: "rgb(54, 162, 235)",
         backgroundColor: "rgba(54, 162, 235, 0.5)",
         yAxisID: "y",
@@ -119,6 +120,14 @@ const CoinChart: React.FC<{ currency_code: string; chartPeriod: any }> = ({
         grid: {
           color: "rgba(0, 0, 0, 0.1)",
         },
+        ticks: {
+          callback: function (val: string): string | undefined {
+            if (+val > 1000000) {
+              return (+val / 1000000).toLocaleString() + "M";
+            }
+            return +val > 1000 ? +val / 1000 + "k" : val;
+          },
+        },
       },
       y1: {
         type: "linear",
@@ -127,6 +136,11 @@ const CoinChart: React.FC<{ currency_code: string; chartPeriod: any }> = ({
 
         grid: {
           drawOnChartArea: false,
+        },
+        ticks: {
+          callback: function (val: string): string | undefined {
+            return +val > 1000 ? (+val / 1000).toLocaleString() + "k" : val;
+          },
         },
       },
       x: {
@@ -139,11 +153,11 @@ const CoinChart: React.FC<{ currency_code: string; chartPeriod: any }> = ({
   };
 
   const chartDataUsdPrice = {
-    labels: data.items[0].chart.map((item: any) => item.date),
+    labels: data.items.map((item: any) => item.date),
     datasets: [
       {
         label: "نرخ دلار",
-        data: data.items[0].chart.map((item: any) => item.usd_price), // Approximation for visualization
+        data: data.items.map((item: any) => item.usd_price), // Approximation for visualization
         borderColor: "rgb(75, 192, 192)",
         backgroundColor: "rgba(75, 192, 192, 0.5)",
         fill: "start",
@@ -158,7 +172,7 @@ const CoinChart: React.FC<{ currency_code: string; chartPeriod: any }> = ({
 
     layout: {
       padding: {
-        right: 90,
+        right: 50,
       },
     },
     interaction: {
@@ -199,6 +213,11 @@ const CoinChart: React.FC<{ currency_code: string; chartPeriod: any }> = ({
         grid: {
           color: "rgba(0, 0, 0, 0.1)",
         },
+        ticks: {
+          callback: function (val: any, index: number): string | undefined {
+            return +val > 1000 ? +val / 1000 + "k" : val;
+          },
+        },
       },
       x: {
         gridLines: { display: false, color: "grey" },
@@ -236,35 +255,51 @@ const CoinChart: React.FC<{ currency_code: string; chartPeriod: any }> = ({
     },
   };
 
+  if (isLoading) {
+    return <div>Loading ...</div>;
+  }
+  if (isError) {
+    return <div>Sorry There was an Error</div>;
+  }
+
   return (
-    <div className="bg-white p-4 rounded-lg shadow-md" dir="rtl">
-      <div className="flex justify-start gap-4 mb-8 mr-8">
-        {chartPeriod.items.map((item: string) => (
-          <button
-            onClick={() => setTimeDuration(item)}
-            className="text-blue-600 text-xs lg:text-sm 2xl:text-base"
-          >
-            {getPeriod(item)}
-          </button>
-        ))}
+    <>
+      <h2 className="text-xl font-bold  text-center my-16">
+        نمودار قیمت
+        <span className="text-2xl font-bold mb-4 text-blue-700">
+          {" "+data.items[0].coin.fa_name+" "}
+        </span>
+        و نرخ برابری تومان
+      </h2>
+      <div className="bg-white p-4 rounded-lg shadow-md" dir="rtl">
+        <div className="flex justify-start gap-4 mb-8 mr-4">
+          {chartPeriod.items.map((item: string) => (
+            <button
+              onClick={() => setTimeDuration(item)}
+              className={`" text-xs lg:text-sm 2xl:text-base" ${item === timeDuration ? "text-blue-600":"text-gray-500"}`}
+            >
+              {getPeriod(item)}
+            </button>
+          ))}
+        </div>
+        <Line options={options} data={chartData} />
+        <Line options={optionsUsdPrice} data={chartDataUsdPrice} />
+        <div className="flex justify-center gap-6 mt-4 text-sm">
+          <div className="flex items-center">
+            <div className="w-3 h-3 bg-orange-400 rounded-full ml-2"></div>
+            <span>قیمت بیت کوین</span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-3 h-3 bg-blue-400 rounded-full ml-2"></div>
+            <span>برابری</span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-3 h-3 bg-green-400 rounded-full ml-2"></div>
+            <span>نرخ دلار</span>
+          </div>
+        </div>
       </div>
-      <Line options={options} data={chartData} />
-      <Line options={optionsUsdPrice} data={chartDataUsdPrice} />
-      <div className="flex justify-center gap-6 mt-4 text-sm">
-        <div className="flex items-center">
-          <div className="w-3 h-3 bg-orange-400 rounded-full ml-2"></div>
-          <span>قیمت بیت کوین</span>
-        </div>
-        <div className="flex items-center">
-          <div className="w-3 h-3 bg-blue-400 rounded-full ml-2"></div>
-          <span>برابری</span>
-        </div>
-        <div className="flex items-center">
-          <div className="w-3 h-3 bg-green-400 rounded-full ml-2"></div>
-          <span>نرخ دلار</span>
-        </div>
-      </div>
-    </div>
+    </>
   );
 };
 
