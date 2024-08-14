@@ -1,3 +1,5 @@
+import Image from "next/image";
+import bitcoin from "../../public/img/bitcoin.jpg";
 const ExplainSection = () => {
   return (
     <div className="mb-8">
@@ -20,11 +22,7 @@ const ExplainSection = () => {
         و سارقان امکان ربودن یوزر نیم ها را در این مرحله انتقال دارا هستند.
       </p>
       <div className="max-w-screen-2xl 2xl:w-3/4 mx-auto mb-8">
-        <img
-          className="mx-auto rounded-lg"
-          src="/img/bitcoin.jpg"
-          alt="screenshot"
-        />
+        <Image className="mx-auto rounded-lg" src={bitcoin  } alt="screenshot" placeholder="blur" />
       </div>
 
       <p className="text-xs lg:text-sm 2xl:text-base mb-8 text-justify leading-6 lg:leading-7 2xl:leading-8">

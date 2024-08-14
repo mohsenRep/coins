@@ -7,9 +7,11 @@ import Footer from "./components/footer";
 import "./fonts/fontawesome/css/solid.css";
 import "./fonts/fontawesome/css/fontawesome.css";
 import "./fonts/fontawesome/css/brands.css";
+import { Suspense } from "react";
+import Loading from "./loading";
 
 const myFont = localFont({
-  src: "/fonts/IRANSans/IRANSansWeb.woff2",
+  src: "/fonts/IRANSans/IRANSansWeb\(FaNum\).woff2",
   display: "swap",
 });
 
@@ -28,7 +30,7 @@ export default function RootLayout({
       <body className={`${myFont.className} bg-gray-50 text-right`}>
         <Providers>
           <Header />
-          {children}
+          <Suspense fallback={<Loading />}>{children}</Suspense>
           <Footer />
         </Providers>
       </body>

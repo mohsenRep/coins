@@ -26,11 +26,13 @@ const Header = () => {
               />
             </svg>
           </button>
-          <img
-            src="/img/logo.svg"
-            alt="Logo"
-            className="h-7 lg:h-14 lg:ml-8 my-3"
-          />
+          <Link href={"/"}>
+            <img
+              src="/img/logo.svg"
+              alt="Logo"
+              className="h-7 lg:h-14 lg:ml-8 my-3"
+            />
+          </Link>
           <ul className="hidden lg:flex space-x-3 2xl:space-x-7 space-x-reverse">
             <li>
               <Link href="/" className="text-gray-700 hover:text-blue-600">
@@ -86,6 +88,7 @@ const Header = () => {
           <nav className="fixed   top-0 left-0 bottom-0 flex flex-col w-full  py-6 px-6 bg-white border-r overflow-y-auto">
             <div className="flex items-center justify-between mb-8">
               <Link
+                onClick={handleClick}
                 className="ml-auto p-4 text-3xl font-bold leading-none"
                 href="/"
               >
@@ -116,6 +119,7 @@ const Header = () => {
               <ul>
                 <li className="mb-1">
                   <Link
+                    onClick={handleClick}
                     className="block p-4 text-sm font-semibold text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded"
                     href="/"
                   >
@@ -124,6 +128,7 @@ const Header = () => {
                 </li>
                 <li className="mb-1">
                   <Link
+                    onClick={handleClick}
                     className="block p-4 text-sm font-semibold text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded"
                     href="/"
                   >
@@ -132,6 +137,7 @@ const Header = () => {
                 </li>
                 <li className="mb-1">
                   <Link
+                    onClick={handleClick}
                     className="block p-4 text-sm font-semibold text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded"
                     href="/"
                   >
@@ -140,6 +146,7 @@ const Header = () => {
                 </li>
                 <li className="mb-1">
                   <Link
+                    onClick={handleClick}
                     className="block p-4 text-sm font-semibold text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded"
                     href="/"
                   >
@@ -148,6 +155,7 @@ const Header = () => {
                 </li>
                 <li className="mb-1">
                   <Link
+                    onClick={handleClick}
                     className="block p-4 text-sm font-semibold text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded"
                     href="/"
                   >

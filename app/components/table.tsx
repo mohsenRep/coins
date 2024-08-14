@@ -2,14 +2,22 @@ import Link from "next/link";
 import { digitsEnToFa, addCommas } from "@persian-tools/persian-tools";
 import { useState } from "react";
 
-const Table = (data: { items: any[] }) => {
+interface TableProps {
+  items: any[];
+}
+const Table: React.FC<TableProps> = ({ items }) => {
   const [toggled, setToggled] = useState<number | undefined>();
-  if (data.items.length === 0) {
-    return <div> نتیجه ای یافت نشد</div>;
+  if (items.length === 0) {
+    return (
+      <div className="flex items-center p-16 justify-center space-x-2 rtl:space-x-reverse">
+        {" "}
+        <h2> نتیجه ای یافت نشد</h2>
+      </div>
+    );
   }
   return (
     <>
-      {data.items.map(
+      {items.map(
         (
           item: {
             id: number;

@@ -13,7 +13,6 @@ import {
   Title,
   Tooltip,
   Legend,
-  Ticks,
 } from "chart.js";
 import { useState } from "react";
 
@@ -28,6 +27,7 @@ ChartJS.register(
   Legend
 );
 
+ChartJS.defaults.font.family = "IRANSansFa";
 const getPeriod = (time: string) => {
   switch (time) {
     case "24h":
@@ -66,7 +66,7 @@ const CoinChart: React.FC<{ currency_code: string; chartPeriod: any }> = ({
     labels: data.items.map((item: any) => item.date),
     datasets: [
       {
-        label: "قیمت بیت کوین",
+        label: `قیمت  ${data.items[0].coin.fa_name}`,
         data: data.items.map((item: any) => item.price),
         borderColor: "rgb(255, 159, 64)",
         backgroundColor: "rgba(255, 159, 64,0.2)",
@@ -83,7 +83,7 @@ const CoinChart: React.FC<{ currency_code: string; chartPeriod: any }> = ({
       },
     ],
   };
-
+  console.log(chartData.datasets[0].data);
   const options: ChartOptions<"line"> = {
     responsive: true,
     interaction: {
@@ -141,11 +141,14 @@ const CoinChart: React.FC<{ currency_code: string; chartPeriod: any }> = ({
           drawOnChartArea: false,
         },
         ticks: {
-          callback: function (val: string | number): string | undefined {
-            return +val > 1000
-              ? (+val / 1000).toLocaleString() + "k"
-              : val.toString();
-          },
+          display: true,
+          autoSkip: true,
+          // callback: function (val: string | number): string | undefined {
+          //   console.log(typeof val);
+          //   return +val > 1000
+          //     ? (+val / 1000).toLocaleString() + "k"
+          //     : val.toString();
+          // },
         },
       },
       x: {
@@ -182,7 +185,7 @@ const CoinChart: React.FC<{ currency_code: string; chartPeriod: any }> = ({
       mode: "index" as const,
       intersect: false,
     },
-    
+
     hover: {
       mode: "index" as const,
       intersect: false,
@@ -279,9 +282,9 @@ const CoinChart: React.FC<{ currency_code: string; chartPeriod: any }> = ({
       </h2>
       <div className="bg-white p-4 rounded-lg shadow-md" dir="rtl">
         <div className="flex justify-start gap-4 mb-8 mr-4">
-          {chartPeriod.items.map((item: string,index:number) => (
+          {chartPeriod.items.map((item: string, index: number) => (
             <button
-            key={index}
+              key={index}
               onClick={() => setTimeDuration(item)}
               className={`" text-xs lg:text-sm 2xl:text-base" ${
                 item === timeDuration ? "text-blue-600" : "text-gray-500"
