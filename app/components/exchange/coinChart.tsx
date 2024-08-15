@@ -273,7 +273,7 @@ const CoinChart: React.FC<{ currency_code: string; chartPeriod: any }> = ({
 
   return (
     <>
-      <h2 className="text-xl font-bold  text-center my-16">
+      <h2 className="text-xl 2xl:text-2xl font-bold  text-center 2xl:text-right 2x my-16">
         نمودار قیمت
         <span className="text-2xl font-bold mb-4 text-blue-700">
           {" " + data.items[0].coin.fa_name + " "}

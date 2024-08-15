@@ -33,7 +33,7 @@ const Header = () => {
               className="h-7 lg:h-14 lg:ml-8 my-3"
             />
           </Link>
-          <ul className="hidden lg:flex space-x-3 2xl:space-x-7 space-x-reverse">
+          <ul className="hidden lg:flex space-x-3  space-x-reverse">
             <li>
               <Link href="/" className="text-gray-700 hover:text-blue-600">
                 صفحه اصلی

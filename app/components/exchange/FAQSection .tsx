@@ -59,7 +59,7 @@ const FAQSection = () => {
 
   return (
     <div className=" py-8 ">
-      <h2 className="text-2xl font-bold mb-6 text-center">سوالات متداول</h2>
+      <h2 className="text-2xl font-bold mb-6 text-center 2xl:text-right">سوالات متداول</h2>
       {faqData.map((faq, index) => (
         <FAQItem key={index} question={faq.question} answer={faq.answer} />
       ))}

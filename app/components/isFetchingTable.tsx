@@ -10,12 +10,12 @@ const IsFetchingTable: React.FC<IsFetchingTableProps> = ({
     <div
       className={`${
         isFetching && !isLoading ? "absolute" : "hidden"
-      }  bg-blue-100 bg-opacity-60 z-10 h-full w-full flex items-start justify-center`}
+      }  bg-blue-300 bg-opacity-60 z-10 h-full w-full flex items-start justify-center`}
     >
-      <div className="flex items-center mt-8">
-        <span className="text-3xl mr-4 "> در حال بارگذاری ... </span>
+      <div className="flex items-center mt-16">
+        <span className="text-xl mr-4 "> در حال بارگذاری ... </span>
         <svg
-          className="animate-spin h-8 w-8 text-gray-800 "
+          className="animate-spin h-6 w-6 text-red-900 "
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"

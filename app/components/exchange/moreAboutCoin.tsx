@@ -17,7 +17,7 @@ const MoreAboutCoin: React.FC<{ currency_code: string }> = ({
   }
   return (
     <section>
-      <h2 className="text-xl font-bold  text-center my-16">
+      <h2 className="text-xl font-bold  text-center 2xl:text-right my-16">
         توضیحات بیشتر درباره{" "}
         <span className="text-2xl font-bold mb-4">
           {data.items[0].fa_name}

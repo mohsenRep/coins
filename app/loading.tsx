@@ -7,7 +7,7 @@ export default function Loading() {
         className="flex items-center space-x-2"
       >
         <svg
-          className="h-20 w-20 animate-spin stroke-gray-500"
+          className="h-8 w-8 animate-spin stroke-gray-500"
           viewBox="0 0 256 256"
         >
           <line
@@ -83,7 +83,7 @@ export default function Loading() {
             strokeWidth="24"
           ></line>
         </svg>
-        <span className="text-4xl font-medium text-gray-500">
+        <span className="text-xl font-medium text-gray-500">
           در حال بارگذاری ...
         </span>
       </div>
